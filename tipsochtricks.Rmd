@@ -1,0 +1,30 @@
+---
+output: 
+  html_document:
+    css: "style.css"
+    theme: cerulean
+    toc: true
+    number_sections: true
+    toc_float:
+      collapsed: FALSE
+    toc_depth: 3
+title: "Tips och tricks"
+
+---
+
+# Gör ditt eget tema 
+
+I outputen kan du hänvisa till ett eget .css-dokument där du ställer in allt från teckensnitt till storleken på rubriker. Se dokumentet "style.css" för några exempel. Lägg dokumentet i samma mapp som markdown-filen.
+
+#Testdata
+Ladda hem ett dataset som vi använder som exempel i rapporten.
+
+
+# Skapa villkorade textblock 
+
+Genom funktionen "eval" kan du ha villkorade textblock. Detta kan fylla en funktion när du vill ha en unik beskrivande text men fortsatt använda en och samma rapport.
+
+```{r}
+
+```
+
