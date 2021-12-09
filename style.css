@@ -1,0 +1,26 @@
+/* Här bestämmer vi teckensnitt och storlek för brödtexten*/
+body{
+  font-family: Garamond;
+  font-size: 12pt;
+}
+
+/* Här bestämmer vi storlek och centrering för de olika rubriknivåerna*/
+h1{
+  font-size: 16pt;
+  text-align: left;
+
+}
+
+h2{
+  font-size: 13pt;
+  text-align: left;
+
+}
+
+/* Här bestämmer vi radbredden för dokumentet*/
+div.main-container {
+  max-width: 1020px !important;
+}
+
+
+
