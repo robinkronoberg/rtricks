@@ -14,6 +14,8 @@ title: "Tips och tricks"
 
 ```{r, echo = FALSE}
 
+## Observera att paketen behöver installeras för att kunna köras.
+
 library("dplyr")
 library("ggplot2")
 library("gapminder")
@@ -27,7 +29,7 @@ library("stringr")
 
 Rapporten innehåller en del exempel på funktioner i R Markdown som vi i Region Halland har arbetat med och som - enligt vår erfarenhet - ofta inte återfinns i standardmanualer. Det är högst sannolikt att koden inte alltid följer "best practice", utan användning sker på "egen risk". Materialet ska med andra ord inte ses som ett grundläggande utbildningsmaterial. Ambtionen är att successivt utveckla dokumentet, både vad gäller funktioner och pedagogik.
 
-Förutom funktioner i Markdown i allmänhet kommer i att samla en del diagram och andra tricks i detta dokument.
+Förutom funktioner i Markdown i allmänhet kommer vi att samla en del diagram och andra tricks i detta dokument.
 
 Alla exempel baseras på statistik från dataset som kan laddas ner direkt i R.
 
@@ -147,7 +149,7 @@ invisible(lapply(plots, print))
 
 # Diagram och grafik
 
-Denn del kommer att uppdateras framöver...
+Denna del kommer att uppdateras framöver...
 
 ## Paket för att modifiera grafer
 
