@@ -12,19 +12,147 @@ title: "Tips och tricks"
 
 ---
 
-# Gör ditt eget tema 
+```{r, echo = FALSE}
 
-I outputen kan du hänvisa till ett eget .css-dokument där du ställer in allt från teckensnitt till storleken på rubriker. Se dokumentet "style.css" för några exempel. Lägg dokumentet i samma mapp som markdown-filen.
-
-#Testdata
-Ladda hem ett dataset som vi använder som exempel i rapporten.
-
-
-# Skapa villkorade textblock 
-
-Genom funktionen "eval" kan du ha villkorade textblock. Detta kan fylla en funktion när du vill ha en unik beskrivande text men fortsatt använda en och samma rapport.
-
-```{r}
+library("dplyr")
+library("ggplot2")
+library("gapminder")
+library("stringr")
 
 ```
 
+# Om dokumentet
+
+**Senaste uppdateringen: `r Sys.Date()`**
+
+Rapporten innehåller en del exempel på funktioner i R Markdown som vi i Region Halland har arbetat med och som - enligt vår erfarenhet - ofta inte återfinns i standardmanualer. Det är högst sannolikt att koden inte alltid följer "best practice", utan användning sker på "egen risk". Materialet ska med andra ord inte ses som ett grundläggande utbildningsmaterial. Ambtionen är att successivt utveckla dokumentet, både vad gäller funktioner och pedagogik.
+
+Förutom funktioner i Markdown i allmänhet kommer i att samla en del diagram och andra tricks i detta dokument.
+
+Alla exempel baseras på statistik från dataset som kan laddas ner direkt i R.
+
+För frågor eller förbättringsförslag kontakta robin.rikardsson@regionhalland.se eller anton.k.larsson@regionhalland.se
+
+För att kunna köra alla funktioner: Klicka på "Code"-> "Download zip" och kör sedan RMarkdown-filen.
+
+# Allmänna tips och tricks
+
+## Gör ditt eget tema 
+
+I outputen kan du hänvisa till ett eget .css-dokument där du ställer in allt från teckensnitt till storleken på rubriker. Se dokumentet "style.css" för några exempel. Lägg dokumentet i samma mapp som markdown-filen.
+
+För att skapa ett .css-dokument: Öppna anteckningar -> Spara som -> välj format "Alla filer" -> Skriv namn och sedan filändelsen .css
+
+Obersvera att .css-dokumentet behöver ha samma namn som i outputen ovanför.
+
+
+## Skapa villkorade chunks / textblock
+
+Genom funktionen "eval" kan du ha villkorade textblock. Detta kan fylla en funktion när du arbetar med parametrar för att skapa flera rapporter men vill ha vissa unika textdelar.
+
+```{r}
+data("mtcars")
+
+cylindrar <- mtcars$cyl ## Här väljer vi att vi vill ha unika block för antalet cylindrar
+
+cylindrar <- sample(c(4,6,8), size=1) ## Här slumpar vi fram antalet cylindrar (substitut för parameter i detta exempel)
+
+cylindrar ## Här ser vi vilket slumptal det blev...
+
+if (cylindrar == 4){ ## Här skriver vi ett villkor: Om det är fyra cylindrar är cyl4 SANT. cyl4 är det villkor vi använder i nästa chunk i anslutning till funktionen "eval"
+cyl4 = TRUE
+} else {
+cyl4 =FALSE
+}
+
+if (cylindrar == 6){
+cyl6 = TRUE
+} else {
+cyl6 =FALSE
+}
+
+if (cylindrar == 8){
+cyl8 = TRUE
+} else {
+cyl8 =FALSE
+}
+
+```
+
+```{r,echo = FALSE, eval=cyl4, results='asis'}
+## Observera att vi i anslutning till "eval" återkopplar till våra if-else statements...
+
+cat(c("Den här texten kommer endast att visas när FYRA cylindrar har slumpats fram."))
+
+```
+
+```{r,echo = FALSE, eval=cyl6, results='asis'}
+cat(c("Den här texten kommer endast att visas när SEX cylindrar har slumpats fram. "))
+
+```
+
+```{r,echo = FALSE, eval=cyl8, results='asis'}
+cat(c("Den här texten kommer endast att visas när ÅTTA cylindrar har slumpats fram. "))
+
+```
+
+## Skapa en expanderbar flik
+
+En fördel med Markdown är att man kan använda HTML-kod för en del praktiska funktioner. Nedan följer ett exempel på expanderbar flik som kan användas för att "gömma" en del förklarande text. Exempelvis kan flikarna användas för att öka tillgängligheten då uppläsningsfunktionen i webläsare "hittar" texten som finns i flikarna.
+
+Man kan ändra stilen på flikarna i .css dokumentet.
+
+<details>
+ <summary>**Stöd för att tolka diagrammet**</summary>
+  Här kan man ha förklarande text till ett diagram, eller någon annan relevant information. 
+</details>
+
+## Skapa diagram i en loop
+
+Det kan finnas tillfällen när man vill loopa fram diagram, exempelvis när facet_wrap/grid inte passar sig. Fördelen är här att varje diagram behandlas som ett enskilt diagram.
+
+```{r, echo = FALSE, fig.height=4, fig.width=3.5}
+
+data <- gapminder ## Ladda in testdata 
+
+data <- data %>% filter( ## Filtrera ut en kontinent i detta fall.. substitut för parameter, ersätt filtrering med din parameter...
+  continent == "Europe"
+) ## Obs blir många diagram i detta fallet...
+
+##Loop
+namn = unique(data$country) ## Här väljer du vilken variabel du vill skapa egna diagram för, i detta fall får varje land i europa en egen graf
+plots = list() ## skapa tom lista
+
+## Nedan följer loop-funktion som skapar ett diagram för varje land i Europa och sparar det till din lista
+
+for(i in namn) {
+  plots[[i]] = ggplot(data %>% filter(country == i), aes(x= year, y=lifeExp)) + ## Här filtrerar vi ut respektive land i...
+    geom_line() +
+    theme_bw() +
+    labs(title = str_wrap(i, 40)) +## Titel för diagramet blir här landnamnet, du kan även ändra radbrytningslängd här
+    labs(subtitle = "Diagrammet visar utvecklingen av livslängden") +
+    theme(legend.position = "top",
+          plot.background = element_rect(fill = "snow2"),
+          plot.title=element_text(size=9, hjust = 0.5, face = "bold", margin=margin(b=5)),
+          plot.subtitle=element_text(size=8, hjust = 0.5))
+
+
+}
+
+## Här är kommandot för att skriva ut alla plots genom lapply-funktionen. Du kan testa och se respektive diagram genom att skriva ex. plots[3] eller helt enkelt ta fram listan för att se vad den innehåller
+
+invisible(lapply(plots, print)) 
+
+```
+
+# Diagram och grafik
+
+Denn del kommer att uppdateras framöver...
+
+## Paket för att modifiera grafer
+
+## Paket för tabeller
+
+## Exempel på olika grafer
+
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
